@@ -1,4 +1,4 @@
-namespace VialSort.Vial;
+namespace GameObjects;
 
 enum ColorLocations
 {
