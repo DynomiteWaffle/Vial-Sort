@@ -143,10 +143,10 @@ class Vial
         }
         // too Big
         // Console.WriteLine(emptiesOnTop+"\n"+Vial.Length);
-        if(emptiesOnTop < Vial.Length){Console.WriteLine("A");return false;}
+        if(emptiesOnTop < Vial.Length){Console.WriteLine("Not Enough Space");return false;}
         // wrong color
         // Console.WriteLine(Vial[0]);
-        if(Vial[0] != this.GetOnlyTopLiquid()[0]){Console.WriteLine("B");return false;}
+        if(Vial[0] != this.GetOnlyTopLiquid()[0]){Console.WriteLine("Colors Dont Match");return false;}
 
         // add to top
         for(int add=emptiesOnTop-Vial.Length;add<=Vial.Length;add++)
@@ -174,7 +174,7 @@ class Vial
                     top = false;
                 }
             }
-            Console.WriteLine(emptiesOnTop);
+            // Console.WriteLine(emptiesOnTop);
             // remove top --doesnt work
             for(int c=emptiesOnTop;c<= this.GetOnlyTopLiquid().Length+emptiesOnTop-1;c++)
             {
