@@ -1,4 +1,4 @@
-namespace GameObjects;
+namespace VialSort.GameObjects;
 
 enum ColorLocations
 {
@@ -186,5 +186,26 @@ class Vial
             Console.WriteLine("Moved Failed");
         }
 
+    }
+    public int GetLenght()
+    {
+        return this.Liquids.Length;
+    }
+    public int GetPos(int pos)
+    {
+        // error checks
+        if(pos>this.Liquids.Length){return (int)ColorLocations.empty;}
+        if(pos<0){return (int)ColorLocations.empty;}
+        if(this.HiddenLiquids)
+        {
+            var temp = this.GetTopLiquid();
+            if(pos > temp.Length){return (int)ColorLocations.unknown;}
+            
+            return temp[pos];
+        }
+        else
+        {
+            return this.Liquids[pos];
+        }
     }
 }
