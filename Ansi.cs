@@ -3,27 +3,22 @@ namespace Render;
 class Ansi
 {
     VialSort.GameObjects.Vial[] Vials;
-    int Index;
-    int Selected;
-
     int emptyColor = (int)ConsoleColor.Black;
     int unknownColor;
-    public Ansi(VialSort.GameObjects.Vial[] Vials,ref int index,ref int selected,ConsoleColor unknownColor)
+    public Ansi(VialSort.GameObjects.Vial[] Vials,ConsoleColor unknownColor)
     {
         this.Vials = Vials;
-        this.Index = index;
-        this.Selected = selected;
         // colors
         this.unknownColor = (int)unknownColor;
     }
     
-    public void DrawVials()
+    public void DrawVials(int index,int selected)
     {
         // draw index
         // 🭭 🭯 │
         int offset = 1;
-        int newIndex = this.Index*3+offset;
-        int newSelected = this.Selected*3+offset;
+        int newIndex = index*3+offset;
+        int newSelected = selected*3+offset;
         for(int i=0;i<this.Vials.Length*3;i++)
         {
             if(i==newIndex)

@@ -72,16 +72,25 @@ class Vial
         }
 
         // get top
+        bool onlyhidden = false;
         for (int l =0; l < this.Liquids.Length;l++)
         {
+            if(onlyhidden)
+            {
+                temp.Add((int)ColorLocations.unknown);
+            }
             if(HiddenLiquids & this.Liquids[l] != TopColor & this.Liquids[l] != (int)ColorLocations.empty)
             {
+                onlyhidden = true;
                 temp.Add((int)ColorLocations.unknown);
                 continue;
             }
             temp.Add(Liquids[l]);
         }
-    
+        // fix for empty vials
+        if(temp.Count == 0){
+            temp.Add((int)ColorLocations.empty);
+        }
         return temp.ToArray();
 
     }
@@ -112,6 +121,11 @@ class Vial
         }
         // foreach(int c in temp){Console.Write(c);}
         // Console.WriteLine(" <- OnlyTopVial");
+        // Console.WriteLine(temp.Count);
+        // fix for empty vials
+        if(temp.Count == 0){
+            temp.Add((int)ColorLocations.empty);
+        }
     
         return temp.ToArray();
     }
@@ -124,6 +138,18 @@ class Vial
         // check if top color == added color
 
         // add to top of liquids
+        // Console.WriteLine("VLen "+Vial.Length);
+        bool EmptyVial = true;
+        foreach(int l in Vial)
+        {
+            if(l != (int)ColorLocations.empty){EmptyVial = false;}
+        }
+        if(EmptyVial){Console.WriteLine("Nothing To Add");return false;}
+
+
+
+        bool completelyEmpty = false;
+
         int emptiesOnTop = 0;
         bool top = true;
         bool[] empties = new bool[this.Liquids.Length];
@@ -141,17 +167,33 @@ class Vial
                 empties[e] = false;
             }
         }
-        // too Big
+        if(emptiesOnTop == this.Liquids.Length){completelyEmpty = true;}
         // Console.WriteLine(emptiesOnTop+"\n"+Vial.Length);
-        if(emptiesOnTop < Vial.Length){Console.WriteLine("Not Enough Space");return false;}
-        // wrong color
-        // Console.WriteLine(Vial[0]);
-        if(Vial[0] != this.GetOnlyTopLiquid()[0]){Console.WriteLine("Colors Dont Match");return false;}
+        if(!completelyEmpty)
+        {
+            // too Big
+            if(emptiesOnTop < Vial.Length){Console.WriteLine("Not Enough Space");return false;}
+            // wrong color
+            // Console.WriteLine(Vial[0]);
+            if(Vial[0] != this.GetOnlyTopLiquid()[0]){Console.WriteLine("Colors Dont Match");return false;}
+        }
+
+        // Console.WriteLine(completelyEmpty);
+        if(completelyEmpty)
+        {
+            // add to top
+            for(int add=0;add < Vial.Length;add++)
+            {
+                // Console.WriteLine(add);
+                this.Liquids[this.Liquids.Length-add-1] = Vial[0];
+            }
+            return true;
+        }
 
         // add to top
-        for(int add=emptiesOnTop-Vial.Length;add<=Vial.Length;add++)
+        for(int add=Vial.Length;add<=Vial.Length;add++)
         {
-            this.Liquids[add] = Vial[0];
+            this.Liquids[emptiesOnTop-add] = Vial[0];
         }
 
         return true;
@@ -175,10 +217,21 @@ class Vial
                 }
             }
             // Console.WriteLine(emptiesOnTop);
-            // remove top --doesnt work
-            for(int c=emptiesOnTop;c<= this.GetOnlyTopLiquid().Length+emptiesOnTop-1;c++)
+            // fully empty
+            if(this.GetOnlyTopLiquid().Length + emptiesOnTop == this.Liquids.Length)
             {
-                this.Liquids[c] = (int)ColorLocations.empty;
+
+                // set to empty
+                for(int i =0; i< this.Liquids.Length;i++)
+                {
+                    this.Liquids[i] = (int)ColorLocations.empty;
+                }
+                return;
+            }
+            // remove layer
+            for(int c=0;c <= this.GetOnlyTopLiquid().Length;c++)
+            {
+                this.Liquids[c+emptiesOnTop-1] = (int)ColorLocations.empty;
             }
         }
         else
