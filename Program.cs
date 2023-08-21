@@ -42,31 +42,60 @@ class Program
         // gameloop
         // initDraw
         DrawScreen();
+        bool keypressed = false;
         while (true)
         {
 
-            if(Console.KeyAvailable)
+            keypress = Console.ReadKey(true);
+            // if(Console.KeyAvailable)
+            // {
+            // }
+            // else{
+            //     keypress = new ConsoleKeyInfo() {};
+            // }
+            if(keypress.Key == ConsoleKey.Escape)
             {
-                keypress = Console.ReadKey(true);
+                break;
             }
-            else{
-                keypress = new ConsoleKeyInfo() {};
-            }
-
             // left
-            if(keypress.Key == ConsoleKey.A & index > 0)
+            if(keypress.Key == ConsoleKey.A | keypress.Key == ConsoleKey.LeftArrow)
             {
-                index--;
-                updateScreen = true;
+                if(index > 0)
+                {
+                    index--;
+                    updateScreen = true;
+                }
+                keypressed = true;
             }
             // right
-            if(keypress.Key == ConsoleKey.D & index < vials.Count-1)
+            if(keypress.Key == ConsoleKey.D | keypress.Key == ConsoleKey.RightArrow)
             {
-                index++;
-                updateScreen = true;
+                if(index < vials.Count-1)
+                {
+                    index++;
+                    updateScreen = true;
+                }
+                keypressed = true;
+            }
+             // TODO: this
+            // undo
+            if(keypress.Key == ConsoleKey.Q)
+            {
+                keypressed = true;
+            }
+            // redo
+            if(keypress.Key == ConsoleKey.E)
+            {
+                keypressed = true;
+            }
+            // reset
+            if(keypress.Key == ConsoleKey.R)
+            {
+                Console.WriteLine("RESET");
+                keypressed = true;   
             }
             // select/move liquid
-            if(keypress.Key == ConsoleKey.Spacebar | keypress.Key == ConsoleKey.W)
+            if(!keypressed)
             {
                 // select
                 if(selected == -1)
@@ -89,27 +118,9 @@ class Program
                 updateScreen = true;
 
             }
-            if(keypress.Key != 0)
-            {
-                // Console.WriteLine(keypress.KeyChar);
-            }
-            // TODO: this
-            // undo
-            if(keypress.Key == ConsoleKey.Q)
-            {
-
-            }
-            // redo
-            if(keypress.Key == ConsoleKey.E)
-            {
-
-            }
-            // reset
-            if(keypress.Key == ConsoleKey.R)
-            {
-                Console.WriteLine("RESET");
-                
-            }
+            // reset keypressed
+            keypressed = false;
+           
             // Console.WriteLine(keypress.Key);
 
             if(updateScreen)
