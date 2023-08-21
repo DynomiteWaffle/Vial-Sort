@@ -45,14 +45,9 @@ class Program
         bool keypressed = false;
         while (true)
         {
-
+            // is blocking - but thats ok for now
             keypress = Console.ReadKey(true);
-            // if(Console.KeyAvailable)
-            // {
-            // }
-            // else{
-            //     keypress = new ConsoleKeyInfo() {};
-            // }
+
             if(keypress.Key == ConsoleKey.Escape)
             {
                 break;
