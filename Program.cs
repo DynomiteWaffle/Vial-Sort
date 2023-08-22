@@ -258,7 +258,7 @@ class Program
                     case(0):
                     // menu
                         Console.WriteLine("Vial Game Setup - Press Enter To Start");
-                        for(int i =0;i<= options.Count;i++)
+                        for(int i =0;i< options.Count;i++)
                         {
                             if(activeOption == i)
                             {
