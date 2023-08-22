@@ -38,10 +38,132 @@ class Program
         bool updateScreen = true;
         Render.Ansi Ansi = Ansi = new Render.Ansi(vials.ToArray(),ConsoleColor.White);
         // graphics
-        // TODO:
-        // gameloop
+        // menu loop
+        ConsoleKey prevButton = (ConsoleKey)0;
+        int activeOption = 0;
+        List<int> options = new List<int> {};
+        // 0 amount vials
+        options.Add(8);
+        // 1 hidden vials
+        options.Add(0);
+        // 2 vials length
+        options.Add(5);
         // initDraw
-        DrawScreen();
+        DrawScreen(0);
+        while (true)
+        {
+
+            int buttonPressed = 0;
+            if(Console.KeyAvailable)
+            {
+                keypress = Console.ReadKey(true);
+            }
+            else
+            {
+                keypress = new ConsoleKeyInfo {};
+            }
+            if(keypress.Key == ConsoleKey.RightArrow)
+            {
+                // right
+                buttonPressed = 1;
+            }
+            if(keypress.Key == ConsoleKey.LeftArrow)
+            {
+                // left
+                buttonPressed = 2;
+            }
+            if(keypress.Key == ConsoleKey.UpArrow & prevButton != ConsoleKey.UpArrow)
+            {
+                // up
+                if(activeOption < 1){activeOption++;}
+                activeOption--;
+                buttonPressed = 3;
+            }
+            if(keypress.Key == ConsoleKey.DownArrow & prevButton != ConsoleKey.DownArrow)
+            {
+                // down
+                if(activeOption > options.Count-2){activeOption--;}
+                activeOption++;
+                buttonPressed = 4;
+            }
+            // 
+            if(keypress.Key == ConsoleKey.Escape)
+            {
+                // exit
+                // buttonPressed = 5;
+                System.Environment.Exit(0);
+            }
+            if(keypress.Key == ConsoleKey.Enter)
+            {
+                // start
+                break;
+            }
+            // prevbutton
+            prevButton = keypress.Key;
+
+            // settings change
+            switch(activeOption)
+            {
+                case(0):
+                // vials
+                    // right
+                    if(buttonPressed == 1)
+                    {
+                        options[activeOption]++;
+                    }
+                    // left
+                    if(buttonPressed == 2)
+                    {
+                        if(options[activeOption] < 2+1)
+                        {
+                            options[activeOption]++;
+                        }
+                        options[activeOption]--;
+                    }
+                    break;
+                case(1):
+                // hidden vials
+                    // right
+                    if(buttonPressed == 1)
+                    {
+                        options[activeOption] = 1;
+                    }
+                    // left
+                    if(buttonPressed == 2)
+                    {
+                        options[activeOption] = 0;
+                    }
+                    break;
+                 case(2):
+                // vials length
+                   // right
+                    if(buttonPressed == 1)
+                    {
+                        options[activeOption]++;
+                    }
+                    // left
+                    if(buttonPressed == 2)
+                    {
+                        if(options[activeOption] < 2+1)
+                        {
+                            options[activeOption]++;
+                        }
+                        options[activeOption]--;
+                    }
+                    break;
+            }
+            if(buttonPressed != 0)
+            {
+                DrawScreen(0);
+            }
+
+        }
+        // destroy menu objects(dont know how)
+
+        // TODO:
+        // game loop
+        // initDraw
+        DrawScreen(1);
         bool keypressed = false;
         while (true)
         {
@@ -117,20 +239,56 @@ class Program
             keypressed = false;
            
             // Console.WriteLine(keypress.Key);
+            // TODO: check if game won
 
             if(updateScreen)
             {
-                DrawScreen();
+                DrawScreen(1);
             }
             updateScreen = false;
         }
 
-        void DrawScreen()
+        void DrawScreen(int state)
         {
             if(ansi)
             {
                 Console.Clear();
-                Ansi.DrawVials(index,selected);
+                switch(state)
+                {
+                    case(0):
+                    // menu
+                        Console.WriteLine("Vial Game Setup - Press Enter To Start");
+                        for(int i =0;i<= options.Count;i++)
+                        {
+
+                            if(activeOption == i)
+                            {
+                                Console.Write('>');
+                            }
+                            switch(i)
+                            {
+                                case(0):
+                                // vials
+                                    Console.WriteLine("Vials: "+options[i]);
+                                    break;
+                                case(1):
+                                // hidden
+                                    Console.WriteLine("VialsHidden: "+Convert.ToBoolean(options[i]));
+                                    break;
+                                case(2):
+                                // length
+                                    Console.WriteLine("VialsLength: "+options[i]);
+                                    
+
+                                    break;
+                            }
+                        }
+                        break;
+                    case(1):
+                    // game
+                        Ansi.DrawVials(index,selected);
+                        break;
+                }
             }
             if(graphics)
             {
