@@ -260,10 +260,13 @@ class Program
                         Console.WriteLine("Vial Game Setup - Press Enter To Start");
                         for(int i =0;i<= options.Count;i++)
                         {
-
                             if(activeOption == i)
                             {
-                                Console.Write('>');
+                                Console.Write("> ");
+                            }
+                            else
+                            {
+                                Console.Write("  ");
                             }
                             switch(i)
                             {
