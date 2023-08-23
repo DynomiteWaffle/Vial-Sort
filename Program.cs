@@ -14,29 +14,14 @@ class Program
             if(args[0] == "--ansi"){graphics = false;}
             if(args[0] == "--graphics"){ansi = false;}
         }
-        
-        
-        // game init
-        int index = 0;
-        int selected = -1;
-        List<GameObjects.Vial> vials = new List<GameObjects.Vial> {};
-        var vialA = new GameObjects.Vial(new int[] {-1,-1,-1,-1},true);
-        var vialC = new GameObjects.Vial(new int[] {-1,-1,-1,-1},true);
-        var vialB = new GameObjects.Vial(new int[] {-1,1,2,1},true);
-        vials.Add(vialA);
-        vials.Add(vialC);
-        vials.Add(vialB);
-        // reset value
-        // clone
-        var resetVials = vials;
-        
-
+        // temperary
+        GameState curentGame = new GameState(new GameObjects.Vial[]{}, 0,-1);        
 
         ConsoleKeyInfo keypress;
 
         // Render Init
         bool updateScreen = true;
-        Render.Ansi Ansi = Ansi = new Render.Ansi(vials.ToArray(),ConsoleColor.White);
+        Render.Ansi Ansi = Ansi = new Render.Ansi(ConsoleColor.White);
         // graphics
         // menu loop
         ConsoleKey prevButton = (ConsoleKey)0;
@@ -160,11 +145,30 @@ class Program
         }
         // destroy menu objects(dont know how)
 
+         // init game
+        // temp
+        List<GameObjects.Vial> vials = new List<GameObjects.Vial> {};
+        var vialA = new GameObjects.Vial(new int[] {-1,-1,-1,-1},true);
+        var vialC = new GameObjects.Vial(new int[] {-1,-1,-1,-1},true);
+        var vialB = new GameObjects.Vial(new int[] {-1,1,2,1},true);
+        vials.Add(vialA);
+        vials.Add(vialC);
+        vials.Add(vialB);
+        // gen vials
+
+        curentGame = new GameState(vials.ToArray(),curentGame.index,curentGame.selected);
+        // reset value
+        // var resetGame = (GameState)curentGame.Clone();
+        // saves
+        int savesLocation = 0;
+        List<GameState> saves = new List<GameState> {(GameState)curentGame.Clone()};
+       
         // TODO:
         // game loop
         // initDraw
         DrawScreen(1);
         bool keypressed = false;
+        bool newsave = false;
         while (true)
         {
             // is blocking - but thats ok for now
@@ -177,66 +181,88 @@ class Program
             // left
             if(keypress.Key == ConsoleKey.A | keypress.Key == ConsoleKey.LeftArrow)
             {
-                if(index > 0)
+                if(curentGame.index > 0)
                 {
-                    index--;
+                    curentGame.index--;
                     updateScreen = true;
                 }
                 keypressed = true;
+                // newsave = true;
             }
             // right
             if(keypress.Key == ConsoleKey.D | keypress.Key == ConsoleKey.RightArrow)
             {
-                if(index < vials.Count-1)
+                if(curentGame.index < curentGame.vials.Length-1)
                 {
-                    index++;
+                    curentGame.index++;
                     updateScreen = true;
                 }
                 keypressed = true;
+                // newsave = true;
             }
              // TODO: this
             // undo
             if(keypress.Key == ConsoleKey.Q)
             {
+                savesLocation--;
+                if(savesLocation<0){savesLocation=0;}
+                curentGame = (GameState)saves[savesLocation].Clone();
                 keypressed = true;
+                updateScreen = true;
             }
             // redo
             if(keypress.Key == ConsoleKey.E)
             {
+                savesLocation++;
+                if(savesLocation>saves.Count-1){savesLocation=saves.Count-1;}
+                curentGame = (GameState)saves[savesLocation].Clone();
                 keypressed = true;
+                updateScreen = true;
             }
             // reset
             if(keypress.Key == ConsoleKey.R)
             {
                 Console.WriteLine("RESET");
                 keypressed = true;   
+                curentGame = (GameState) saves[0].Clone();
+                saves.RemoveRange(1,saves.Count-1);
+                updateScreen = true;
             }
             // select/move liquid
             if(!keypressed)
             {
                 // select
-                if(selected == -1)
+                if(curentGame.selected == -1)
                 {
-                    selected = index;
+                    curentGame.selected = curentGame.index;
                 }
                 // move
                 else
                 {
-                    if(selected == index)
+                    if(curentGame.selected == curentGame.index)
                     {
                         Console.WriteLine("Cannot Move To Self");
                     }
                     else
                     {
-                        vials[selected].MoveTopToVial(vials[index]);
+                        curentGame.vials[curentGame.selected].MoveTopToVial(curentGame.vials[curentGame.index]);
+                        // create backup
+                        newsave = true;
                     }
-                    selected = -1;
+                    curentGame.selected = -1;
                 }
                 updateScreen = true;
 
             }
+            if(newsave)
+            {
+                saves.RemoveRange(savesLocation+1,saves.Count-savesLocation-1);
+                saves.Add((GameState)curentGame.Clone());
+                savesLocation++;
+            }
             // reset keypressed
             keypressed = false;
+            newsave = false;
            
             // Console.WriteLine(keypress.Key);
             // TODO: check if game won
@@ -244,6 +270,7 @@ class Program
             if(updateScreen)
             {
                 DrawScreen(1);
+
             }
             updateScreen = false;
         }
@@ -255,8 +282,8 @@ class Program
                 Console.Clear();
                 switch(state)
                 {
-                    case(0):
                     // menu
+                    case(0):
                         Console.WriteLine("Vial Game Setup - Press Enter To Start");
                         for(int i =0;i< options.Count;i++)
                         {
@@ -281,15 +308,13 @@ class Program
                                 case(2):
                                 // length
                                     Console.WriteLine("VialsLength: "+options[i]);
-                                    
-
                                     break;
                             }
                         }
                         break;
-                    case(1):
                     // game
-                        Ansi.DrawVials(index,selected);
+                    case(1):
+                        Ansi.DrawVials(curentGame.vials,curentGame.index,curentGame.selected);
                         break;
                 }
             }
@@ -300,4 +325,29 @@ class Program
         }
     }
    
+}
+class GameState : ICloneable
+{
+    public GameObjects.Vial[] vials;
+    public int index;
+    public int selected;
+    public GameState(GameObjects.Vial[] Vials,int Index,int Selected)
+    {
+        this.vials = Vials;
+        this.index = Index;
+        this.selected = Selected;
+    }
+
+
+    public object Clone()
+    {
+        var temp = (GameState) this.MemberwiseClone();
+        List<GameObjects.Vial> V = new List<GameObjects.Vial> {};
+        foreach(GameObjects.Vial v in this.vials)
+        {
+            V.Add((GameObjects.Vial)v.Clone());
+        }
+        temp.vials = V.ToArray();
+        return temp;
+    }
 }

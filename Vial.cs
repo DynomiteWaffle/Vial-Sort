@@ -47,7 +47,7 @@ class Colors
 }
 
 
-class Vial
+class Vial : ICloneable
 {
     int[] Liquids;
     bool HiddenLiquids {get;}
@@ -260,5 +260,11 @@ class Vial
         {
             return this.Liquids[pos];
         }
+    }
+    public object Clone()
+    {
+        var temp = (Vial) this.MemberwiseClone();
+        temp.Liquids = (int[]) this.Liquids.Clone();
+        return temp;
     }
 }

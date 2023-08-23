@@ -2,24 +2,22 @@ namespace Render;
 
 class Ansi
 {
-    VialSort.GameObjects.Vial[] Vials;
     int emptyColor = (int)ConsoleColor.Black;
     int unknownColor;
-    public Ansi(VialSort.GameObjects.Vial[] Vials,ConsoleColor unknownColor)
+    public Ansi(ConsoleColor unknownColor)
     {
-        this.Vials = Vials;
         // colors
         this.unknownColor = (int)unknownColor;
     }
     
-    public void DrawVials(int index,int selected)
+    public void DrawVials(VialSort.GameObjects.Vial[] Vials,int index,int selected)
     {
         // draw index
         // 🭭 🭯 │
         int offset = 1;
         int newIndex = index*3+offset;
         int newSelected = selected*3+offset;
-        for(int i=0;i<this.Vials.Length*3;i++)
+        for(int i=0;i<Vials.Length*3;i++)
         {
             if(i==newIndex)
             {
@@ -37,10 +35,10 @@ class Ansi
         }
         Console.WriteLine();
 
-        for(int l=0;l<=Math.Ceiling(this.Vials[0].GetLenght()/2f);l+=2)
+        for(int l=0;l<=Math.Ceiling(Vials[0].GetLenght()/2f);l+=2)
         {
             // Console.WriteLine(l);
-            foreach(VialSort.GameObjects.Vial v in this.Vials)
+            foreach(VialSort.GameObjects.Vial v in Vials)
             {
                 Console.Write("│");
                 // colors
@@ -58,7 +56,7 @@ class Ansi
         }
         // bottoms of vials
         // ▔
-        for(int i=0;i<this.Vials.Length*3;i++)
+        for(int i=0;i<Vials.Length*3;i++)
         {
             Console.Write("▔");
         }
