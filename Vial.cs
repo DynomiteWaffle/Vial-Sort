@@ -1,51 +1,74 @@
+using System.Runtime.Serialization;
+
 namespace VialSort.GameObjects;
 
 enum ColorLocations
 {
-    empty = -1,
-    unknown = -2
+    empty = 0,
+    unknown = 1,
 }
-struct Color
+[Serializable()]
+public struct Color : ISerializable
 {
-    public int red {get;}
-    public int green {get;}
-    public int blue {get;}
-    public ConsoleColor color {get;}
+    public int red = 0;
+    public int green = 0;
+    public int blue = 0 ;
 
-
-    public Color(int red,int green,int blue,ConsoleColor color)
+    public Color() {}
+    public Color(int red,int green,int blue)
     {
         this.red = red;
         this.green = green;
         this.blue = blue;
-        this.color = color;
     }
-    public Color(ConsoleColor color)
-    {
-        this.red = 0;
-        this.green = 0;
-        this.blue = 0;
-        this.color = color;
-    }
-}
-class Colors
-{
-    public List<Color> colors {get;}
-    // public Dictionary<ConsoleColor,Color> colors {get;}
-    Colors(Color empty,Color unknown)
-    {
-        this.colors = new List<Color> {empty,unknown};
-        // this.colors = new Dictionary<ConsoleColor, Color> {};
-        // this.colors[empty.color] = empty; 
-        // this.colors[unknown.color] = unknown; 
-    }
-    public void AddColor(Color Color)
-    {
-        colors.Add(Color);
-        // colors[Color.color] = Color;
-    }
-}
 
+     void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue("red",this.red);
+        info.AddValue("green",this.green);
+        info.AddValue("blue",this.blue);
+    }
+    public Color(SerializationInfo info, StreamingContext context)
+    {
+        this.red = (int)info.GetValue("red", typeof(int));
+        this.green = (int)info.GetValue("green", typeof(int));
+        this.blue = (int)info.GetValue("blue", typeof(int));
+    }
+}
+// [Serializable()]
+// public class Colors : ISerializable
+// {
+//     public List<Color> colors {get;}
+//     // public Dictionary<ConsoleColor,Color> colors {get;}
+//     public Colors()
+//     {
+//         this.colors = new List<Color> {new Color(0,0,0),new Color(0,0,0)};
+//     }
+//     public Colors(Color empty,Color unknown)
+//     {
+//         this.colors = new List<Color> {empty,unknown};
+//         // this.colors = new Dictionary<ConsoleColor, Color> {};
+//         // this.colors[empty.color] = empty; 
+//         // this.colors[unknown.color] = unknown; 
+//     }
+//     public void AddColor(Color Color)
+//     {
+//         colors.Add(Color);
+//         // colors[Color.color] = Color;
+//     }
+
+//     void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+//     {
+//         foreach(Color c in this.colors)
+//         {
+//             info.AddValue("colors",c);
+//         }
+//     }
+//     // public Colors(SerializationInfo info, StreamingContext context)
+//     // {
+//     //      this.colors = (List<Color>)info.GetValue("colors", typeof(List<Color>));
+//     // }
+// }
 
 class Vial : ICloneable
 {

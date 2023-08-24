@@ -2,12 +2,14 @@ namespace Render;
 
 class Ansi
 {
-    int emptyColor = (int)ConsoleColor.Black;
-    int unknownColor;
-    public Ansi(ConsoleColor unknownColor)
+    int emptyColor = 0;
+    int unknownColor = 1;
+
+    List<VialSort.GameObjects.Color> colors;
+    public Ansi(List<VialSort.GameObjects.Color> Colors)
     {
         // colors
-        this.unknownColor = (int)unknownColor;
+        this.colors = Colors;
     }
     
     public void DrawVials(VialSort.GameObjects.Vial[] Vials,int index,int selected)
@@ -44,12 +46,7 @@ class Ansi
                 // colors
                 int top = v.GetPos(l);
                 int bot = v.GetPos(l+1);
-                if(top == (int)VialSort.GameObjects.ColorLocations.empty){top = this.emptyColor;}
-                if(top == (int)VialSort.GameObjects.ColorLocations.unknown){top = this.unknownColor;}
-
-                if(bot == (int)VialSort.GameObjects.ColorLocations.empty){bot = this.emptyColor;}
-                if(bot == (int)VialSort.GameObjects.ColorLocations.unknown){bot = this.unknownColor;}
-                DrawPixel((ConsoleColor)top,(ConsoleColor)bot);
+                DrawPixel(top,bot);
                 Console.Write("│");
             }
             Console.WriteLine();
@@ -62,34 +59,26 @@ class Ansi
         }
         Console.WriteLine();
     }
-    public void DrawPixel(int x,int y,ConsoleColor top,ConsoleColor bottom)
+    public void DrawPixel(int topColor,int bottomColor)
     {
         // pixel
-        Console.ForegroundColor = top;
-        Console.BackgroundColor = bottom;
-        Console.Write("▀");
-        Console.ResetColor();
-    }
-    public void DrawPixel(ConsoleColor top,ConsoleColor bottom)
-    {
-        // pixel
-        Console.ForegroundColor = top;
-        Console.BackgroundColor = bottom;
-        Console.Write("▀");
-        Console.ResetColor();
-    }
-    public void DrawPixel(ConsoleColor color,bool istop)
-    {
-        if(istop)
+        if(topColor != emptyColor)
         {
-            Console.ForegroundColor = color;
+            Console.Write("\x1b[38;2;"+this.colors[topColor].red+";"+this.colors[topColor].green+";"+this.colors[topColor].blue+"m"); // topcolor
         }
-        else{
-            Console.ForegroundColor = Console.BackgroundColor;
-            Console.BackgroundColor = color;
+        else
+        {
+            Console.ForegroundColor = (ConsoleColor)0; //color of background
         }
-        // pixel
+        if(bottomColor != emptyColor)
+        {
+            Console.Write("\x1b[48;2;"+this.colors[bottomColor].red+";"+this.colors[bottomColor].green+";"+this.colors[bottomColor].blue+"m"); // bottomcolor
+        }
+        else
+        {
+            Console.BackgroundColor = (ConsoleColor)0; //color of background
+        }
         Console.Write("▀");
-        Console.ResetColor();
+        Console.Write("\x1b[0m"); // resetcolors
     }
 }

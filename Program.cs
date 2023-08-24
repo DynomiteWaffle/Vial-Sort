@@ -1,4 +1,5 @@
-﻿namespace VialSort;
+﻿using System.Text.Json;
+namespace VialSort;
 class Program
 {
     
@@ -18,21 +19,102 @@ class Program
         GameState curentGame = new GameState(new GameObjects.Vial[]{}, 0,-1);        
 
         ConsoleKeyInfo keypress;
+        // Default Colors
+            List<GameObjects.Color> DefaultColors = new List<GameObjects.Color> {};
+            DefaultColors.Add(new GameObjects.Color(0,0,0));
+            DefaultColors.Add(new GameObjects.Color(255,255,255));
+            // colors
+            DefaultColors.Add(new GameObjects.Color(255,0,0));
+            DefaultColors.Add(new GameObjects.Color(0,255,0));
+            DefaultColors.Add(new GameObjects.Color(0,0,255));
+
+            DefaultColors.Add(new GameObjects.Color(255,0,255));
+            DefaultColors.Add(new GameObjects.Color(0,255,255));
+            DefaultColors.Add(new GameObjects.Color(255,255,0));
+
+
+            DefaultColors.Add(new GameObjects.Color(255,122,0));
+            DefaultColors.Add(new GameObjects.Color(128,0,255));
+            DefaultColors.Add(new GameObjects.Color(0,255,134));
+
+            DefaultColors.Add(new GameObjects.Color(255,134,255));
+            DefaultColors.Add(new GameObjects.Color(0,58,0));
+            DefaultColors.Add(new GameObjects.Color(83,43,13));
+
+            DefaultColors.Add(new GameObjects.Color(175,255,0));
+            DefaultColors.Add(new GameObjects.Color(155,74,16));
+            DefaultColors.Add(new GameObjects.Color(80,72,255));
+
+            DefaultColors.Add(new GameObjects.Color(171,137,0));
+        // load colors
+        List<GameObjects.Color> colors = new List<GameObjects.Color> {};
+        FileStream colorsfs;
+        System.Xml.Serialization.XmlSerializer colorsxml = new System.Xml.Serialization.XmlSerializer(typeof(List<GameObjects.Color>));
+    
+        // Console.WriteLine(File.Exists("Colors.xml"));
+        if(!File.Exists("Colors.xml"))
+        {
+            colorsfs = File.Create("Colors.xml");
+            colorsxml.Serialize(colorsfs,DefaultColors);
+            colorsfs.Close();
+
+        }
+        try
+        {
+            colorsfs = File.OpenRead("Colors.xml");
+
+            colors = (List<GameObjects.Color>) colorsxml.Deserialize(colorsfs);
+            if(colors == null)
+            {
+                colors = DefaultColors;
+            }
+
+            colorsfs.Close();
+        }
+        catch
+        {
+            Console.WriteLine("ERROR: Could Not Read Colors.xml - Try Deleteing It");
+            System.Environment.Exit(1);
+        }
+        // GameObjects.Colors colors = new GameObjects.Colors(new GameObjects.Color(0,0,0),new GameObjects.Color(255,255,255));
+        // colors.AddColor(new GameObjects.Color(255,0,0));
+        // colors.AddColor(new GameObjects.Color(0,255,0));
+        // colors.AddColor(new GameObjects.Color(0,0,255));
 
         // Render Init
         bool updateScreen = true;
-        Render.Ansi Ansi = Ansi = new Render.Ansi(ConsoleColor.White);
+        Render.Ansi Ansi = Ansi = new Render.Ansi(colors);
         // graphics
         // menu loop
         ConsoleKey prevButton = (ConsoleKey)0;
         int activeOption = 0;
-        List<int> options = new List<int> {};
-        // 0 amount vials
-        options.Add(8);
-        // 1 hidden vials
-        options.Add(0);
-        // 2 vials length
-        options.Add(5);
+        int optionsAmount = 3;
+        // List<int> options = new List<int> {};
+        // System.Xml.XmlDocument Settings = new System.Xml.XmlDocument();
+        Settings settings = new Settings();
+        System.Xml.Serialization.XmlSerializer settingsxml = new System.Xml.Serialization.XmlSerializer(typeof(Settings));
+        FileStream settingsfs = new FileStream("Settings.xml",FileMode.OpenOrCreate);
+        if(!File.Exists("Settings.xml"))
+        {
+            settingsxml.Serialize(settingsfs,settings);
+        }
+        else
+        {
+            try
+            {
+                settings = (Settings) settingsxml.Deserialize(settingsfs);
+            }
+            catch
+            {
+                settingsxml.Serialize(settingsfs,settings);
+            }
+        }
+        settingsfs.Close();
+        if(settings == null)
+        {
+            settings = new Settings();
+        }
+
         // initDraw
         DrawScreen(0);
         while (true)
@@ -67,7 +149,7 @@ class Program
             if(keypress.Key == ConsoleKey.DownArrow & prevButton != ConsoleKey.DownArrow)
             {
                 // down
-                if(activeOption > options.Count-2){activeOption--;}
+                if(activeOption > optionsAmount-2){activeOption--;}
                 activeOption++;
                 buttonPressed = 4;
             }
@@ -94,16 +176,20 @@ class Program
                     // right
                     if(buttonPressed == 1)
                     {
-                        options[activeOption]++;
+                        if(settings.Vials > colors.Count-3)
+                        {
+                            settings.Vials--;
+                        }
+                        settings.Vials++;
                     }
                     // left
                     if(buttonPressed == 2)
                     {
-                        if(options[activeOption] < 2+1)
+                        if(settings.Vials < 2+1)
                         {
-                            options[activeOption]++;
+                            settings.Vials++;
                         }
-                        options[activeOption]--;
+                        settings.Vials--;
                     }
                     break;
                 case(1):
@@ -111,12 +197,12 @@ class Program
                     // right
                     if(buttonPressed == 1)
                     {
-                        options[activeOption] = 1;
+                        settings.HiddenLiquids = true;
                     }
                     // left
                     if(buttonPressed == 2)
                     {
-                        options[activeOption] = 0;
+                        settings.HiddenLiquids = false;
                     }
                     break;
                  case(2):
@@ -124,16 +210,16 @@ class Program
                    // right
                     if(buttonPressed == 1)
                     {
-                        options[activeOption]++;
+                        settings.VialsLength++;
                     }
                     // left
                     if(buttonPressed == 2)
                     {
-                        if(options[activeOption] < 2+1)
+                        if(settings.VialsLength < 2+1)
                         {
-                            options[activeOption]++;
+                            settings.VialsLength++;
                         }
-                        options[activeOption]--;
+                        settings.VialsLength--;
                     }
                     break;
             }
@@ -143,18 +229,33 @@ class Program
             }
 
         }
+        // Settings.Save("Settings.xml");
+        settingsfs = new FileStream("Settings.xml",FileMode.Create);
+        settingsxml.Serialize(settingsfs,settings);
+        settingsfs.Close();
         // destroy menu objects(dont know how)
 
          // init game
+        //  random
+         string seed = string.Empty;
+         seed+=DateTime.Now.Year;
+         if(DateTime.Now.Month < 10){seed+="0";}
+         seed+=DateTime.Now.Month;
+         if(DateTime.Now.Day < 10){seed+="0";}
+         seed+=DateTime.Now.Day;
+         var rnd = new Random(Convert.ToInt32(seed));
         // temp
         List<GameObjects.Vial> vials = new List<GameObjects.Vial> {};
-        var vialA = new GameObjects.Vial(new int[] {-1,-1,-1,-1},true);
-        var vialC = new GameObjects.Vial(new int[] {-1,-1,-1,-1},true);
-        var vialB = new GameObjects.Vial(new int[] {-1,1,2,1},true);
+        var vialA = new GameObjects.Vial(new int[] {0,0,0,0},true);
+        var vialC = new GameObjects.Vial(new int[] {0,0,0,0},true);
+        var vialB = new GameObjects.Vial(new int[] {0,2,3,2},true);
         vials.Add(vialA);
         vials.Add(vialC);
         vials.Add(vialB);
         // gen vials
+        // 0 vials count
+        // 1 hidden vials
+        // 2 vials lenght
 
         curentGame = new GameState(vials.ToArray(),curentGame.index,curentGame.selected);
         // reset value
@@ -285,7 +386,7 @@ class Program
                     // menu
                     case(0):
                         Console.WriteLine("Vial Game Setup - Press Enter To Start");
-                        for(int i =0;i< options.Count;i++)
+                        for(int i =0;i < optionsAmount;i++)
                         {
                             if(activeOption == i)
                             {
@@ -299,15 +400,15 @@ class Program
                             {
                                 case(0):
                                 // vials
-                                    Console.WriteLine("Vials: "+options[i]);
+                                    Console.WriteLine("Vials: "+settings.Vials);
                                     break;
                                 case(1):
                                 // hidden
-                                    Console.WriteLine("VialsHidden: "+Convert.ToBoolean(options[i]));
+                                    Console.WriteLine("VialsHidden: "+settings.HiddenLiquids);
                                     break;
                                 case(2):
                                 // length
-                                    Console.WriteLine("VialsLength: "+options[i]);
+                                    Console.WriteLine("VialsLength: "+settings.VialsLength);
                                     break;
                             }
                         }
@@ -350,4 +451,11 @@ class GameState : ICloneable
         temp.vials = V.ToArray();
         return temp;
     }
+}
+public class Settings
+{
+    public int Vials = 5;
+    public int VialsLength = 5;
+    public bool HiddenLiquids = false;
+    public Settings(){}
 }
