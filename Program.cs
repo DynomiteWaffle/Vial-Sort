@@ -93,23 +93,32 @@ class Program
         // System.Xml.XmlDocument Settings = new System.Xml.XmlDocument();
         Settings settings = new Settings();
         System.Xml.Serialization.XmlSerializer settingsxml = new System.Xml.Serialization.XmlSerializer(typeof(Settings));
-        FileStream settingsfs = new FileStream("Settings.xml",FileMode.OpenOrCreate);
+        FileStream settingsfs;
         if(!File.Exists("Settings.xml"))
         {
+            settingsfs = new FileStream("Settings.xml",FileMode.CreateNew);
             settingsxml.Serialize(settingsfs,settings);
+            settingsfs.Close();
+
+
         }
         else
         {
             try
             {
+                settingsfs = new FileStream("Settings.xml",FileMode.Open);
                 settings = (Settings) settingsxml.Deserialize(settingsfs);
+                settingsfs.Close();
+
             }
             catch
             {
+                File.Delete("Settings.xml");
+                settingsfs = new FileStream("Settings.xml",FileMode.CreateNew);
                 settingsxml.Serialize(settingsfs,settings);
+                settingsfs.Close();
             }
         }
-        settingsfs.Close();
         if(settings == null)
         {
             settings = new Settings();
