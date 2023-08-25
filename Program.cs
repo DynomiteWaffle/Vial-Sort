@@ -259,13 +259,108 @@ class Program
          var rnd = new Random(Convert.ToInt32(seed));
         // temp
         List<GameObjects.Vial> vials = new List<GameObjects.Vial> {};
-        vials.Add( new GameObjects.Vial(new int[] {2+2,1+2,1+2,4+2},true));
-        vials.Add( new GameObjects.Vial(new int[] {1+2,3+2,2+2,4+2},true));
-        vials.Add( new GameObjects.Vial(new int[] {3+2,4+2,2+2,3+2},true));
-        vials.Add( new GameObjects.Vial(new int[] {4+2,3+2,1+2,2+2},true));
-        vials.Add( new GameObjects.Vial(new int[] {0,0,0,0},true));
-        vials.Add( new GameObjects.Vial(new int[] {0,0,0,0},true));
+        // vials.Add( new GameObjects.Vial(new int[] {2+2,1+2,1+2,4+2},true));
+        // vials.Add( new GameObjects.Vial(new int[] {1+2,3+2,2+2,4+2},true));
+        // vials.Add( new GameObjects.Vial(new int[] {3+2,4+2,2+2,3+2},true));
+        // vials.Add( new GameObjects.Vial(new int[] {4+2,3+2,1+2,2+2},true));
+        // vials.Add( new GameObjects.Vial(new int[] {0,0,0,0},true));
+        // vials.Add( new GameObjects.Vial(new int[] {0,0,0,0},true));
         // gen vials
+        /*
+        mixing algorithem:
+            get list full vials - length = num colored vials
+            get list empty vials - length = num colored vials
+            move 2 from top of 2 full vials to 2 random empty vials
+        */ 
+        // gen full+empty vials
+        List<List<int>> fullVials = new List<List<int>> {};
+        List<List<int>> emptyVials = new List<List<int>> {};
+        List<List<int>> finalVials = new List<List<int>> {};
+        foreach(int v in Enumerable.Range(0,settings.Vials))
+        {
+            emptyVials.Add(new List<int> {});
+            fullVials.Add(Enumerable.Repeat(v+2,settings.VialsLength).ToList());
+        }
+
+        // the check
+        int len = 0;
+        foreach(List<int> l in fullVials)
+        {
+            len+= l.Count;
+        }
+        Console.WriteLine(len);
+        // the move TODO: this
+        foreach(int m in Enumerable.Range(0,len))
+        {
+            // Console.WriteLine("Loop"+m);
+            // BUG: rnd value could be taken
+            int v1 = rnd.Next(fullVials.Count);
+            int t1 = rnd.Next(emptyVials.Count);
+
+            // BUG: rnd value could be taken
+            // int v2 = rnd.Next(fullVials.Count);
+            // int t2 = rnd.Next(emptyVials.Count);
+            // Console.WriteLine("vials Count: "+fullVials.Count+":"+emptyVials.Count);
+            // Console.WriteLine("fvr"+v1+":");
+            // Console.WriteLine("tvr"+t1+":");
+            // Console.WriteLine();
+
+            // Console.WriteLine("a");
+            // add
+            // emptyVials[t2].Add(fullVials[v2].First());
+            emptyVials[t1].Add(fullVials[v1].First());
+
+            // Console.WriteLine("b");
+
+            // remove
+            fullVials[v1].RemoveAt(0);
+            // fullVials[v2].RemoveAt(0);
+            // Console.WriteLine("c");
+
+
+            // remove new empty vials
+            for(int v=fullVials.Count-1; v>=0;v--)
+            {
+                if(fullVials[v].Count == 0)
+                {
+                    fullVials.RemoveAt(v);
+                }
+            }
+          
+            // remove new full vials
+            for(int v=emptyVials.Count-1; v>=0;v--)
+            {
+                if(emptyVials[v].Count == settings.VialsLength)
+                {
+                    finalVials.Add(emptyVials[v]);
+                    emptyVials.RemoveAt(v);
+                }
+            }
+        }
+        // move odd one out
+        // if((int)Math.Ceiling(len/2f)-(int)Math.Floor(len/2f) == 1)
+        // {
+        //     foreach(List<int> l in emptyVials)
+        //     {
+        //         if(l.Count < settings.VialsLength)
+        //         {
+        //             l.Add(fullVials[0][0]);
+        //             break;
+        //         }
+        //     }
+        // }
+        // add 2 empty vials
+        finalVials.Add(Enumerable.Repeat(0,settings.VialsLength).ToList());
+        finalVials.Add(Enumerable.Repeat(0,settings.VialsLength).ToList());
+
+        // convert to game obj
+        foreach(List<int> v in finalVials)
+        {
+            vials.Add(new GameObjects.Vial(v.ToArray(),settings.HiddenLiquids));
+        }
+
+        
+
         // 0 vials count
         // 1 hidden vials
         // 2 vials lenght
@@ -283,7 +378,6 @@ class Program
         DrawScreen(1);
         bool keypressed = false;
         bool newsave = false;
-        bool gameWon = false;
         Timer.Start();
         while (true)
         {
@@ -374,8 +468,8 @@ class Program
             }
             if(newsave)
             {
-                Console.WriteLine("SAVES COUNT "+saves.Count);
-                Console.WriteLine("SAVES loc "+savesLocation);
+                // Console.WriteLine("SAVES COUNT "+saves.Count);
+                // Console.WriteLine("SAVES loc "+savesLocation);
                 saves.RemoveRange(savesLocation+1,saves.Count-savesLocation-1);
                 saves.Add((GameState)curentGame.Clone());
                 savesLocation++;
@@ -418,7 +512,7 @@ class Program
         {
             if(ansi)
             {
-                Console.Clear();
+                // Console.Clear();
                 switch(state)
                 {
                     // menu

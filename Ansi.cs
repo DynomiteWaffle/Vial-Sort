@@ -12,8 +12,14 @@ class Ansi
         this.colors = Colors;
     }
     
+    // TODO:BUG: doesn't draw correctly
     public void DrawVials(VialSort.GameObjects.Vial[] Vials,int index,int selected)
     {
+        foreach(VialSort.GameObjects.Vial v in Vials)
+        {
+            foreach(int c in v.GetTopLiquid()){Console.Write(c);}
+            Console.WriteLine();
+        }
         // draw index
         // 🭭 🭯 │
         int offset = 1;
@@ -36,7 +42,7 @@ class Ansi
             }
         }
         Console.WriteLine();
-
+        // draw colors
         for(int l=0;l<=Math.Ceiling(Vials[0].GetLenght()/2f);l+=2)
         {
             // Console.WriteLine(l);

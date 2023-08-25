@@ -152,6 +152,7 @@ class Vial : ICloneable
     
         return temp.ToArray();
     }
+    
     public bool AddToTop(int[] Vial)
     {
         // get empties
