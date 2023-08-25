@@ -335,6 +335,7 @@ class Program
                 Console.WriteLine("RESET");
                 keypressed = true;   
                 curentGame = (GameState) saves[0].Clone();
+                savesLocation = 0;
                 saves.RemoveRange(1,saves.Count-1);
                 updateScreen = true;
             }
@@ -366,6 +367,8 @@ class Program
             }
             if(newsave)
             {
+                Console.WriteLine("SAVES COUNT "+saves.Count);
+                Console.WriteLine("SAVES loc "+savesLocation);
                 saves.RemoveRange(savesLocation+1,saves.Count-savesLocation-1);
                 saves.Add((GameState)curentGame.Clone());
                 savesLocation++;
