@@ -255,12 +255,12 @@ class Program
          var rnd = new Random(Convert.ToInt32(seed));
         // temp
         List<GameObjects.Vial> vials = new List<GameObjects.Vial> {};
-        var vialA = new GameObjects.Vial(new int[] {0,0,0,0},true);
-        var vialC = new GameObjects.Vial(new int[] {0,0,0,0},true);
-        var vialB = new GameObjects.Vial(new int[] {0,2,3,2},true);
-        vials.Add(vialA);
-        vials.Add(vialC);
-        vials.Add(vialB);
+        vials.Add( new GameObjects.Vial(new int[] {2+2,1+2,1+2,4+2},true));
+        vials.Add( new GameObjects.Vial(new int[] {1+2,3+2,2+2,4+2},true));
+        vials.Add( new GameObjects.Vial(new int[] {3+2,4+2,2+2,3+2},true));
+        vials.Add( new GameObjects.Vial(new int[] {4+2,3+2,1+2,2+2},true));
+        vials.Add( new GameObjects.Vial(new int[] {0,0,0,0},true));
+        vials.Add( new GameObjects.Vial(new int[] {0,0,0,0},true));
         // gen vials
         // 0 vials count
         // 1 hidden vials

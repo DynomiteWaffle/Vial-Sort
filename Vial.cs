@@ -154,69 +154,46 @@ class Vial : ICloneable
     }
     public bool AddToTop(int[] Vial)
     {
-        // foreach(int c in Vial){Console.Write(c);}
-        // Console.WriteLine(" <- Vial");
-        // checks
-        // check if it will fit
-        // check if top color == added color
-
-        // add to top of liquids
-        // Console.WriteLine("VLen "+Vial.Length);
-        bool EmptyVial = true;
-        foreach(int l in Vial)
-        {
-            if(l != (int)ColorLocations.empty){EmptyVial = false;}
-        }
-        if(EmptyVial){Console.WriteLine("Nothing To Add");return false;}
-
-
-
-        bool completelyEmpty = false;
-
+        // get empties
         int emptiesOnTop = 0;
-        bool top = true;
-        bool[] empties = new bool[this.Liquids.Length];
-        for(int e=0; e<this.Liquids.Length;e++)
+        foreach(int l in this.Liquids)
         {
-            if(this.Liquids[e] == (int)ColorLocations.empty)
+            if(l==(int)ColorLocations.empty)
             {
-                // Console.WriteLine("newEmptie");
-                if(top){emptiesOnTop++;}
-                empties[e] = true;
+                emptiesOnTop++;
             }
             else
             {
-                top = false;
-                empties[e] = false;
+                break;
             }
         }
-        if(emptiesOnTop == this.Liquids.Length){completelyEmpty = true;}
-        // Console.WriteLine(emptiesOnTop+"\n"+Vial.Length);
-        if(!completelyEmpty)
-        {
-            // too Big
-            if(emptiesOnTop < Vial.Length){Console.WriteLine("Not Enough Space");return false;}
-            // wrong color
-            // Console.WriteLine(Vial[0]);
-            if(Vial[0] != this.GetOnlyTopLiquid()[0]){Console.WriteLine("Colors Dont Match");return false;}
-        }
 
-        // Console.WriteLine(completelyEmpty);
-        if(completelyEmpty)
-        {
-            // add to top
-            for(int add=0;add < Vial.Length;add++)
-            {
-                // Console.WriteLine(add);
-                this.Liquids[this.Liquids.Length-add-1] = Vial[0];
-            }
-            return true;
-        }
+        // foreach(int c in Vial){Console.Write(c);}
+        // Console.WriteLine(" <- Vial");
+        // foreach(int c in this.Liquids){Console.Write(c);}
+        // Console.WriteLine(" <- This Vial");
 
-        // add to top
-        for(int add=Vial.Length;add<=Vial.Length;add++)
+        // checks
+        // check right color
+        if(this.Liquids.Length != emptiesOnTop & this.GetOnlyTopLiquid()[0] != Vial[0])
         {
-            this.Liquids[emptiesOnTop-add] = Vial[0];
+            Console.WriteLine("Wrong Color");
+            return false;
+        }
+        // check if vial empty
+        // check if it will fit
+        if(emptiesOnTop < Vial.Length)
+        {
+            Console.WriteLine("Vial Too Full");
+            return false;
+        }
+ 
+
+        // add vial
+        foreach(int i in Enumerable.Range(emptiesOnTop-Vial.Length,Vial.Length))
+        {
+            // Console.WriteLine(i);
+            this.Liquids[i] = Vial[0];
         }
 
         return true;
@@ -226,35 +203,21 @@ class Vial : ICloneable
         if(Vial.AddToTop(this.GetOnlyTopLiquid()))
         {
             int emptiesOnTop = 0;
-            bool top = true;
-            for(int e=0; e<this.Liquids.Length;e++)
+            foreach(int l in this.Liquids)
             {
-                if(this.Liquids[e] == (int)ColorLocations.empty)
+                if(l==(int)ColorLocations.empty)
                 {
-                    // Console.WriteLine("newEmptie");
-                    if(top){emptiesOnTop++;}
+                    emptiesOnTop++;
                 }
                 else
                 {
-                    top = false;
+                    break;
                 }
             }
-            // Console.WriteLine(emptiesOnTop);
-            // fully empty
-            if(this.GetOnlyTopLiquid().Length + emptiesOnTop == this.Liquids.Length)
+            // remove liquids
+            foreach(int i in Enumerable.Range(emptiesOnTop,this.GetOnlyTopLiquid().Length)) 
             {
-
-                // set to empty
-                for(int i =0; i< this.Liquids.Length;i++)
-                {
-                    this.Liquids[i] = (int)ColorLocations.empty;
-                }
-                return;
-            }
-            // remove layer
-            for(int c=0;c <= this.GetOnlyTopLiquid().Length;c++)
-            {
-                this.Liquids[c+emptiesOnTop-1] = (int)ColorLocations.empty;
+                this.Liquids[i] = (int)ColorLocations.empty;
             }
         }
         else
