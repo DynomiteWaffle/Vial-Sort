@@ -244,6 +244,10 @@ class Program
         settingsfs.Close();
         // destroy menu objects(dont know how)
 
+
+        // Game timer
+        System.Diagnostics.Stopwatch Timer = new System.Diagnostics.Stopwatch();
+
          // init game
         //  random
          string seed = string.Empty;
@@ -279,6 +283,8 @@ class Program
         DrawScreen(1);
         bool keypressed = false;
         bool newsave = false;
+        bool gameWon = false;
+        Timer.Start();
         while (true)
         {
             // is blocking - but thats ok for now
@@ -338,6 +344,7 @@ class Program
                 savesLocation = 0;
                 saves.RemoveRange(1,saves.Count-1);
                 updateScreen = true;
+                Timer.Restart();
             }
             // select/move liquid
             if(!keypressed)
@@ -360,7 +367,7 @@ class Program
                         // create backup
                         newsave = true;
                     }
-                    curentGame.selected = -1;
+                    curentGame.selected = -1;                    
                 }
                 updateScreen = true;
 
@@ -383,6 +390,25 @@ class Program
             if(updateScreen)
             {
                 DrawScreen(1);
+                // check if game won
+                bool check = true;
+                foreach(GameObjects.Vial v in curentGame.vials)
+                {
+                    if(!v.isSolid())
+                    {
+                        check = false;
+                        break;
+                    }
+                }
+                // check win
+                if(check)
+                {
+                    // game won
+                    Timer.Stop();
+                    Console.WriteLine("Time: "+Timer.ElapsedMilliseconds/1000f+"s");
+                    break;
+
+                }
 
             }
             updateScreen = false;

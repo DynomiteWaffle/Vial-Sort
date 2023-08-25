@@ -252,6 +252,19 @@ class Vial : ICloneable
             return this.Liquids[pos];
         }
     }
+    public bool isSolid()
+    {
+        bool check = true;
+        foreach(int l in this.Liquids)
+        {
+            if(l != this.Liquids[0])
+            {
+                check = false;
+                break;
+            }
+        }
+        return check;
+    }
     public object Clone()
     {
         var temp = (Vial) this.MemberwiseClone();
