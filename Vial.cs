@@ -174,6 +174,12 @@ class Vial : ICloneable
         // Console.WriteLine(" <- This Vial");
 
         // checks
+        // check empty vial
+        if(Vial[0] == (int)ColorLocations.empty)
+        {
+            Console.WriteLine("Nothing To Move");
+            return false;
+        }
         // check right color
         if(this.Liquids.Length != emptiesOnTop & this.GetOnlyTopLiquid()[0] != Vial[0])
         {
@@ -187,12 +193,11 @@ class Vial : ICloneable
             Console.WriteLine("Vial Too Full");
             return false;
         }
- 
 
         // add vial
         foreach(int i in Enumerable.Range(emptiesOnTop-Vial.Length,Vial.Length))
         {
-            // Console.WriteLine(i);
+            Console.WriteLine(i);
             this.Liquids[i] = Vial[0];
         }
 
