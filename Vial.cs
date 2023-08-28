@@ -239,7 +239,7 @@ class Vial : ICloneable
     public int GetPos(int pos)
     {
         // error checks
-        if(pos>this.Liquids.Length){return (int)ColorLocations.empty;}
+        if(pos>this.Liquids.Length-1){return (int)ColorLocations.empty;}
         if(pos<0){return (int)ColorLocations.empty;}
         if(this.HiddenLiquids)
         {

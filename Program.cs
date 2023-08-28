@@ -259,12 +259,6 @@ class Program
          var rnd = new Random(Convert.ToInt32(seed));
         // temp
         List<GameObjects.Vial> vials = new List<GameObjects.Vial> {};
-        // vials.Add( new GameObjects.Vial(new int[] {2+2,1+2,1+2,4+2},true));
-        // vials.Add( new GameObjects.Vial(new int[] {1+2,3+2,2+2,4+2},true));
-        // vials.Add( new GameObjects.Vial(new int[] {3+2,4+2,2+2,3+2},true));
-        // vials.Add( new GameObjects.Vial(new int[] {4+2,3+2,1+2,2+2},true));
-        // vials.Add( new GameObjects.Vial(new int[] {0,0,0,0},true));
-        // vials.Add( new GameObjects.Vial(new int[] {0,0,0,0},true));
         // gen vials
         /*
         mixing algorithem:
@@ -512,7 +506,7 @@ class Program
         {
             if(ansi)
             {
-                // Console.Clear();
+                Console.Clear();
                 switch(state)
                 {
                     // menu
