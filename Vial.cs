@@ -84,36 +84,46 @@ class Vial : ICloneable
     {
         List<int> temp = new List<int> {};
 
-        int TopColor = 0;
-        foreach(int c in this.Liquids)
-        {
-            if(c != (int)ColorLocations.empty)
-            {
-                TopColor = c;
-                break;
-            }
-        }
+        int color = this.GetOnlyTopLiquid()[0];
 
-        // get top
-        bool onlyhidden = false;
-        for (int l =0; l < this.Liquids.Length;l++)
+        foreach(int l in this.Liquids)
         {
-            if(onlyhidden)
-            {
-                temp.Add((int)ColorLocations.unknown);
-            }
-            if(HiddenLiquids & this.Liquids[l] != TopColor & this.Liquids[l] != (int)ColorLocations.empty)
-            {
-                onlyhidden = true;
-                temp.Add((int)ColorLocations.unknown);
-                continue;
-            }
-            temp.Add(Liquids[l]);
-        }
-        // fix for empty vials
-        if(temp.Count == 0){
-            temp.Add((int)ColorLocations.empty);
-        }
+            if(l == (int)ColorLocations.empty){temp.Add((int)ColorLocations.empty);continue;}
+            if(l != color){break;}
+            temp.Add(color);
+        }   
+
+
+        // int TopColor = 0;
+        // foreach(int c in this.Liquids)
+        // {
+        //     if(c != (int)ColorLocations.empty)
+        //     {
+        //         TopColor = c;
+        //         break;
+        //     }
+        // }
+
+        // // get top
+        // bool onlyhidden = false;
+        // for (int l =0; l < this.Liquids.Length;l++)
+        // {
+        //     if(onlyhidden)
+        //     {
+        //         temp.Add((int)ColorLocations.unknown);
+        //     }
+        //     if(HiddenLiquids & this.Liquids[l] != TopColor & this.Liquids[l] != (int)ColorLocations.empty)
+        //     {
+        //         onlyhidden = true;
+        //         temp.Add((int)ColorLocations.unknown);
+        //         continue;
+        //     }
+        //     temp.Add(Liquids[l]);
+        // }
+        // // fix for empty vials
+        // if(temp.Count == 0){
+        //     temp.Add((int)ColorLocations.empty);
+        // }
         return temp.ToArray();
 
     }
@@ -244,7 +254,7 @@ class Vial : ICloneable
         if(this.HiddenLiquids)
         {
             var temp = this.GetTopLiquid();
-            if(pos > temp.Length){return (int)ColorLocations.unknown;}
+            if(pos > temp.Length-1){return (int)ColorLocations.unknown;}
             
             return temp[pos];
         }
