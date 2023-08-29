@@ -94,28 +94,42 @@ class Ansi
     }
     public string DrawPixel(int topColor,int bottomColor)
     {
+        bool isTop = false;
+        if (topColor == emptyColor)
+        {
+            isTop = false;
+        }
+        else
+        {
+            isTop = true;
+        }
         string output = string.Empty;
         // pixel
-        if(topColor != emptyColor)
+        if(isTop)
         {
             output +=("\x1b[38;2;"+this.colors[topColor].red+";"+this.colors[topColor].green+";"+this.colors[topColor].blue+"m"); // topcolor
+            if(bottomColor != emptyColor)
+            {
+                output +=("\x1b[48;2;"+this.colors[bottomColor].red+";"+this.colors[bottomColor].green+";"+this.colors[bottomColor].blue+"m"); // bottomColor
+            }
         }
         else
         {
-            // Console.ForegroundColor = (ConsoleColor)0; //color of background
-            output +=("\x1b[30m");
+            output +=("\x1b[38;2;"+this.colors[bottomColor].red+";"+this.colors[bottomColor].green+";"+this.colors[bottomColor].blue+"m"); // bottomColor
         }
-        if(bottomColor != emptyColor)
+        // add cube
+        if(isTop)
         {
-            output +=("\x1b[48;2;"+this.colors[bottomColor].red+";"+this.colors[bottomColor].green+";"+this.colors[bottomColor].blue+"m"); // bottomcolor
+            output +="▀";
+        }
+        else if (!isTop & bottomColor == emptyColor)
+        {
+            output += " ";
         }
         else
         {
-            // Console.BackgroundColor = (ConsoleColor)0; //color of background
-            // Console.Write("\x1b[40m");
-
+            output += "▄";
         }
-        output +=("▀");
         output +=("\x1b[0m"); // resetcolors
 
         return output;

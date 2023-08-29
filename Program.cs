@@ -88,7 +88,7 @@ class Program
         // menu loop
         ConsoleKey prevButton = (ConsoleKey)0;
         int activeOption = 0;
-        int optionsAmount = 3;
+        int optionsAmount = 4;
         // List<int> options = new List<int> {};
         // System.Xml.XmlDocument Settings = new System.Xml.XmlDocument();
         Settings settings = new Settings();
@@ -231,6 +231,19 @@ class Program
                         settings.VialsLength--;
                     }
                     break;
+                case(3):
+                // daily
+                    // right
+                    if(buttonPressed == 1)
+                    {
+                        settings.Daily = true;
+                    }
+                    // left
+                    if(buttonPressed == 2)
+                    {
+                        settings.Daily = false;
+                    }
+                    break;
             }
             if(buttonPressed != 0)
             {
@@ -250,13 +263,24 @@ class Program
 
          // init game
         //  random
-         string seed = string.Empty;
-         seed+=DateTime.Now.Year;
-         if(DateTime.Now.Month < 10){seed+="0";}
-         seed+=DateTime.Now.Month;
-         if(DateTime.Now.Day < 10){seed+="0";}
-         seed+=DateTime.Now.Day;
-         var rnd = new Random(Convert.ToInt32(seed));
+        Random rnd;
+        if(settings.Daily)
+        {
+            string seed = string.Empty;
+            seed+=DateTime.Now.Year;
+            if(DateTime.Now.Month < 10){seed+="0";}
+            seed+=DateTime.Now.Month;
+            if(DateTime.Now.Day < 10){seed+="0";}
+            seed+=DateTime.Now.Day;
+
+            rnd = new Random(Convert.ToInt32(seed));
+        }
+        else
+        {
+            rnd = new Random();
+        }
+         
+         
         // temp
         List<GameObjects.Vial> vials = new List<GameObjects.Vial> {};
         // gen vials
@@ -536,6 +560,10 @@ class Program
                                 // length
                                     Console.WriteLine("VialsLength: "+settings.VialsLength);
                                     break;
+                                    case(3):
+                                // Daily
+                                    Console.WriteLine("Daily: : "+settings.Daily);
+                                    break;
                             }
                         }
                         break;
@@ -583,5 +611,6 @@ public class Settings
     public int Vials = 5;
     public int VialsLength = 5;
     public bool HiddenLiquids = false;
+    public bool Daily = true;
     public Settings(){}
 }
