@@ -232,7 +232,7 @@ class Vial : ICloneable
         }
 
     }
-    public int GetLenght()
+    public int GetLength()
     {
         return this.Liquids.Length;
     }

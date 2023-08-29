@@ -19,7 +19,7 @@ class Ansi
     public void DrawVials(VialSort.GameObjects.Vial[] Vials,int index,int selected)
     {
         int bufferWidth = Vials.Length+1;
-        string[] buffer = new string[Vials.Length*10];
+        string[] buffer = new string[((int)Math.Ceiling(Vials[0].GetLength()/2f)+1)*bufferWidth];
 
         foreach(int i in Enumerable.Range(0,buffer.Length))
         {
@@ -63,7 +63,7 @@ class Ansi
         int yoff = 1;
         foreach(VialSort.GameObjects.Vial v in Vials)
         {
-            foreach(int i in Enumerable.Range(0,(int)Math.Ceiling(v.GetLenght()/2f)))
+            foreach(int i in Enumerable.Range(0,(int)Math.Ceiling(v.GetLength()/2f)))
             {
 
                 SetAt(cur,i+yoff,bufferWidth,ref buffer,DrawPixel(v.GetPos(i*2),v.GetPos(i*2+1)));
@@ -73,7 +73,7 @@ class Ansi
             
         }
         // draw buffer
-        foreach(int i in Enumerable.Range(0,Vials[0].GetLenght()-1))
+        foreach(int i in Enumerable.Range(0,buffer.Length/bufferWidth))
         {
             if(i==0)
             {
