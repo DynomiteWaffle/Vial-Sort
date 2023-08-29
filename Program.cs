@@ -204,14 +204,16 @@ class Program
                 case(1):
                 // hidden vials
                     // right
-                    if(buttonPressed == 1)
+                    if(buttonPressed == 1 | buttonPressed == 2)
                     {
-                        settings.HiddenLiquids = true;
-                    }
-                    // left
-                    if(buttonPressed == 2)
-                    {
-                        settings.HiddenLiquids = false;
+                        if(settings.HiddenLiquids)
+                        {
+                            settings.HiddenLiquids = false;
+                        }
+                        else
+                        {
+                            settings.HiddenLiquids = true;
+                        }
                     }
                     break;
                  case(2):
@@ -233,15 +235,16 @@ class Program
                     break;
                 case(3):
                 // daily
-                    // right
-                    if(buttonPressed == 1)
+                    if(buttonPressed == 1 | buttonPressed == 2)
                     {
-                        settings.Daily = true;
-                    }
-                    // left
-                    if(buttonPressed == 2)
-                    {
-                        settings.Daily = false;
+                        if(settings.Daily)
+                        {
+                            settings.Daily = false;
+                        }
+                        else
+                        {
+                            settings.Daily = true;
+                        }
                     }
                     break;
             }
@@ -409,22 +412,24 @@ class Program
             // left
             if(keypress.Key == ConsoleKey.A | keypress.Key == ConsoleKey.LeftArrow)
             {
-                if(curentGame.index > 0)
+                curentGame.index--;
+                if(curentGame.index < 0)
                 {
-                    curentGame.index--;
-                    updateScreen = true;
+                    curentGame.index = finalVials.Count()-1;
                 }
+                updateScreen = true;
                 keypressed = true;
                 // newsave = true;
             }
             // right
             if(keypress.Key == ConsoleKey.D | keypress.Key == ConsoleKey.RightArrow)
             {
-                if(curentGame.index < curentGame.vials.Length-1)
+                curentGame.index++;
+                if(curentGame.index > curentGame.vials.Length-1)
                 {
-                    curentGame.index++;
-                    updateScreen = true;
+                    curentGame.index = 0;
                 }
+                updateScreen = true;
                 keypressed = true;
                 // newsave = true;
             }
